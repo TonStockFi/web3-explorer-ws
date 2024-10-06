@@ -34,18 +34,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: windows-latest
             command: make:intel
             tag: x64
-            dist: /apps/desktop/out/make/deb/x64
-          - os: ubuntu-latest
-            command: make:arm
-            tag: arm64
-            dist: /apps/desktop/out/make/deb/arm64
-#          - os: windows-latest
-#            command: make:intel
-#            tag: x64
-#            dist: /apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
+            dist: /apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -102,15 +94,17 @@ jobs:
         run: |
           tree ${{ github.workspace }}/apps/desktop/out/make/
 
-      - name: Upload release assets (.zip, .deb, .exe)
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ env.RELEASE_URL }}
-          asset_path: |
-            apps/desktop/.gitignore
-          asset_name: |
-            .gitignore
-          asset_content_type: application/octet-stream
+#      - name: Upload Release Assets
+#        if: matrix.tag == 'x64' && runner.os == 'ubuntu-latest'
+#        run: |
+#          ASSET_PATH="apps/desktop/out/make/zip/Web3ExplorerWs-linux-x64-3.23.0.zip"  # Adjust path as necessary
+#          ASSET_NAME="Web3ExplorerWs-linux-x64-3.23.0.zip"  # Adjust name as necessary
+#
+#          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#          -H "Content-Type: application/octet-stream" \
+#          --data-binary @"${ASSET_PATH}" \
+#          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${ASSET_NAME}"
+
 
 #
 #      - name: Upload zip distributives to artifacts
