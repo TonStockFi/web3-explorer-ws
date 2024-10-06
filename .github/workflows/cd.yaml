@@ -12,10 +12,6 @@ permissions:
 jobs:
   desktop-build:
     name: desktop-build
-    permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
     strategy:
       matrix:
         include:
@@ -53,16 +49,13 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Automatically generated release for ${{ github.ref }}.
-          draft: false
-          prerelease: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${tag#v}" \
 
       - name: print create_release upload_url
         run: |

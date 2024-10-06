@@ -1,0 +1,27 @@
+name: Web3ExplorerWs CD
+on:
+    push:
+      branches:
+        - main
+env:
+    node-version: 20.11.1
+
+permissions:
+  contents: write  # Grant write access to contents for release creation
+
+jobs:
+  desktop-build:
+    name: desktop-build
+    timeout-minutes: 30
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: v1.0.5
+        run: |
+          gh release create "v1.0.5" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${tag#v}" \
+              --generate-notes
+
+
