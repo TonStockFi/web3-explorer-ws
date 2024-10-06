@@ -1,8 +1,8 @@
 name: Web3ExplorerWs CD
 on:
     push:
-        tags:
-            - v*
+      branches:
+        - main
 env:
     node-version: 20.11.1
 
