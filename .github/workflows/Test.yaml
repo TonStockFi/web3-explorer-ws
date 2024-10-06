@@ -10,29 +10,10 @@ permissions:
   contents: write  # Grant write access to contents for release creation
 
 jobs:
-  desktop-build:
-    name: desktop-build
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            command: make:intel
-            tag: x64
-            dist: /apps/desktop/out/make/deb/x64
-          - os: ubuntu-latest
-            command: make:arm
-            tag: arm64
-            dist: /apps/desktop/out/make/deb/arm64
-          - os: windows-latest
-            command: make:intel
-            tag: x64
-            dist: /apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+  release:
+    name: Release pushed tag
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout to git repository
-        uses: actions/checkout@v4
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,3 +23,10 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               --generate-notes
+          REPO_NAME=${{ github.repository }}
+          TAG_NAME=${{ github.ref_name }}
+          RELEASE_URL="https://github.com/${REPO_NAME}/releases/tag/${TAG_NAME}"
+          echo "Release URL: $RELEASE_URL"
+          echo "::set-output name=release_url::$RELEASE_URL"
+ 
+          
