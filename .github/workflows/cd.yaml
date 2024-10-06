@@ -91,8 +91,25 @@ jobs:
           cmd: ${{ matrix.command }}
           dir: 'apps/desktop'
       - name: debug
+        if: runner.os == 'Windows'
         run: |
-          tree ${{ github.workspace }}/apps/desktop/out/make/
+          dir /s /b ${{ github.workspace }}/apps/desktop/out/make/
+      - name: debug
+        if: runner.os != 'Windows'
+        run: |
+          dirtr ${{ github.workspace }}/apps/desktop/out/make/
+
+#      - name: Upload Release Assets
+#        if: runner.os == 'Windows'
+#        run: |
+#          ASSET_PATH="apps/desktop/out/make/zip/Web3ExplorerWs-linux-x64-3.23.0.zip"  # Adjust path as necessary
+#          ASSET_NAME="Web3ExplorerWs-linux-x64-3.23.0.zip"  # Adjust name as necessary
+#
+#          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#          -H "Content-Type: application/octet-stream" \
+#          --data-binary @"${ASSET_PATH}" \
+#          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${ASSET_NAME}"
+#
 
 #      - name: Upload Release Assets
 #        if: matrix.tag == 'x64' && runner.os == 'ubuntu-latest'
