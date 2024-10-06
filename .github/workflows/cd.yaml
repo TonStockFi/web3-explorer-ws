@@ -94,7 +94,7 @@ jobs:
       - name: debug
         if: runner.os == 'Windows'
         run: |
-          dir ${{ github.workspace }}/apps/desktop/out/make/zip
+          dir ${{ github.workspace }}/apps/desktop/out/make/zip/win32
           dir ${{ github.workspace }}/apps/desktop/out/make/squirrel.windows/x64
       - name: debug
         if: runner.os != 'Windows'
@@ -117,12 +117,14 @@ jobs:
           ASSET_PATH: ${{ github.workspace }}/apps/desktop/out/make/squirrel.windows\x64\Web3ExplorerWs-3.23.0 Setup.exe
           ASSET_NAME: Web3ExplorerWs-3.23.0 Setup.exe
         run: |
-          echo ${{ github.event.release.id }}
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @"${ASSET_PATH}" \
-          "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets?name=${ASSET_NAME}"
-
+          $releaseId = ${{ github.event.release.id }}
+          $token = "${{ secrets.GITHUB_TOKEN }}"
+          $url = "https://uploads.github.com/repos/${{ github.repository }}/releases/$releaseId/assets?name=${{ env.ASSET_NAME }}"
+          $headers = @{
+              Authorization = "token $token"
+              "Content-Type" = "application/octet-stream"
+          }
+          Invoke-RestMethod -Method Post -Uri $url -Headers $headers -InFile $env:ASSET_PATH
 
 #      - name: Upload Release Assets
 #        if: matrix.tag == 'x64' && runner.os == 'ubuntu-latest'
