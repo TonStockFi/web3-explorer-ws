@@ -10,15 +10,12 @@ permissions:
   contents: write  # Grant write access to contents for release creation
 
 jobs:
-
-
   desktop-build:
+    name: desktop-build
     permissions:
       contents: write
       pull-requests: write
       repository-projects: write
-    name: desktop-build
-
     strategy:
       matrix:
         include:
@@ -58,7 +55,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provided automatically by GitHub
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
