@@ -25,7 +25,7 @@ jobs:
               --generate-notes
           REPO_NAME=${{ github.repository }}
           TAG_NAME=${{ github.ref_name }}
-          RELEASE_URL="https://github.com/${REPO_NAME}/releases/tag/${TAG_NAME}"
+          RELEASE_URL="https://github.com/${REPO_NAME}/releases/tag/${tag#v}"
           echo "Release URL: $RELEASE_URL"
           echo "::set-output name=release_url::$RELEASE_URL"
  
