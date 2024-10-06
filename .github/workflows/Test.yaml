@@ -28,5 +28,11 @@ jobs:
           RELEASE_URL="https://github.com/${REPO_NAME}/releases/tag/${tag#v}"
           echo "Release URL: $RELEASE_URL"
           echo "::set-output name=release_url::$RELEASE_URL"
- 
-          
+  desktop-build:
+    name: desktop-build
+    runs-on: ubuntu-22.04
+    needs: release
+    steps:
+      - name: echo release_url
+        run: |
+          echo "Generated Release URL: ${{ needs.create-release.outputs.release_url }}"
