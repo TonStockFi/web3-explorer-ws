@@ -1,8 +1,8 @@
 name: Web3ExplorerWs CD
 on:
     push:
-      branches:
-        - main
+        tags:
+            - v*
 env:
     node-version: 20.11.1
 
@@ -12,16 +12,34 @@ permissions:
 jobs:
   desktop-build:
     name: desktop-build
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            command: make:intel
+            tag: x64
+            dist: /apps/desktop/out/make/deb/x64
+          - os: ubuntu-latest
+            command: make:arm
+            tag: arm64
+            dist: /apps/desktop/out/make/deb/arm64
+          - os: windows-latest
+            command: make:intel
+            tag: x64
+            dist: /apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 30
+
     steps:
+      - name: Checkout to git repository
+        uses: actions/checkout@v4
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: v1.0.5
         run: |
-          gh release create "v1.0.5" \
+          gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               --generate-notes
-
-
