@@ -7,7 +7,7 @@ env:
     node-version: 20.11.1
 
 permissions:
-  contents: write  # Grant write access to contents for release creation
+  contents: write
 
 jobs:
   release:
@@ -29,18 +29,15 @@ jobs:
                 --generate-notes
             echo "Release $tag created."
           fi
-          REPO_NAME=${{ github.repository }}
-          TAG_NAME=${{ github.ref_name }}
-          RELEASE_URL="https://github.com/${REPO_NAME}/releases/tag/${tag#v}"
-          echo "Release URL: $RELEASE_URL"
-          echo "::set-output name=release_url::$RELEASE_URL"
-      
 
   desktop-build:
     name: desktop-build
     runs-on: ubuntu-22.04
     needs: release
+    env:
+      tag: v1.0.6
+      RELEASE_URL: https://github.com/${{github.repository}}/releases/tag/${tag#v}
     steps:
       - name: echo release_url
         run: |
-          echo "Generated Release URL: ${{ needs.create-release.outputs.release_url }}"
+          echo "Generated Release URL: ${{ RELEASE_URL }}"
