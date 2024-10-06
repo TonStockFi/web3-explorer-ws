@@ -17,7 +17,7 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: v1.0.5
+          tag: v1.0.6
         run: |
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
