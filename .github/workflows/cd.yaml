@@ -10,8 +10,27 @@ permissions:
   contents: write  # Grant write access to contents for release creation
 
 jobs:
+  release:
+    name: Release pushed tag
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: v1.0.6
+        run: |
+          if gh release view "$tag" --repo="$GITHUB_REPOSITORY" &> /dev/null; then
+            echo "Release $tag already exists."
+          else
+            gh release create "$tag" \
+                --repo="$GITHUB_REPOSITORY" \
+                --title="${tag#v}" \
+                --generate-notes
+            echo "Release $tag created."
+          fi
   desktop-build:
     name: desktop-build
+    needs: release
     strategy:
       matrix:
         include:
@@ -31,6 +50,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     env:
+      RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
       APPLE_API_KEY: ${{ github.workspace }}/AuthKey.p8
       APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
       APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
@@ -42,24 +62,24 @@ jobs:
       REACT_APP_APTABASE_HOST: https://anonymous-analytics.tonkeeper.com
       REACT_APP_STONFI_REFERRAL_ADDRESS: ${{ secrets.REACT_APP_STONFI_REFERRAL_ADDRESS }}
       DEBUG: electron*
-
     steps:
-      - name: Checkout to git repository
-        uses: actions/checkout@v4
-
-      - name: Create Release
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
+      - name: Print Release Upload_url
         run: |
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${tag#v}" \
+          echo "Release Upload URL: ${{ env.RELEASE_URL }}"
 
-      - name: print create_release upload_url
-        run: |
-          echo "Upload URL: ${{ steps.create-release.outputs.upload_url }}"
+#      - name: Checkout to git repository
+#        uses: actions/checkout@v4
+#
+#      - name: Create Release
+#        id: create_release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          tag: ${{ github.ref_name }}
+#        run: |
+#          gh release create "$tag" \
+#              --repo="$GITHUB_REPOSITORY" \
+#              --title="${tag#v}" \
+
 
 #      - name: Set up Node
 #        uses: actions/setup-node@v4
