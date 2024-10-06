@@ -29,7 +29,6 @@ jobs:
             dist: /apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-
     steps:
       - name: Checkout to git repository
         uses: actions/checkout@v4
