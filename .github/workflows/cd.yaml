@@ -10,33 +10,15 @@ permissions:
   contents: write  # Grant write access to contents for release creation
 
 jobs:
-  create-release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
+
+
+  desktop-build:
     permissions:
       contents: write
       pull-requests: write
       repository-projects: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provided automatically by GitHub
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Automatically generated release for ${{ github.ref }}.
-          draft: false
-          prerelease: false
-
-  desktop-build:
     name: desktop-build
-    needs: create-release
+
     strategy:
       matrix:
         include:
@@ -69,13 +51,26 @@ jobs:
       DEBUG: electron*
 
     steps:
+      - name: Checkout to git repository
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provided automatically by GitHub
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Automatically generated release for ${{ github.ref }}.
+          draft: false
+          prerelease: false
+
       - name: print create_release upload_url
         run: |
-          echo "Upload URL: ${{ needs.create-release.outputs.upload_url }}"
+          echo "Upload URL: ${{ steps.create-release.outputs.upload_url }}"
 
-#      - name: Checkout to git repository
-#        uses: actions/checkout@v4
-#
 #      - name: Set up Node
 #        uses: actions/setup-node@v4
 #        with:
