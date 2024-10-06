@@ -102,6 +102,16 @@ jobs:
         run: |
           tree ${{ github.workspace }}/apps/desktop/out/make/
 
+      - name: Upload release assets (.zip, .deb, .exe)
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ env.RELEASE_URL }}
+          asset_path: |
+            apps/desktop/.gitignore
+          asset_name: |
+            .gitignore
+          asset_content_type: application/octet-stream
+
 #
 #      - name: Upload zip distributives to artifacts
 #        uses: actions/upload-artifact@v4
@@ -125,16 +135,3 @@ jobs:
 #        run: |
 #          rm ${{ github.workspace }}/AuthKey.p8
 
-#      - name: Upload release assets (.zip, .deb, .exe)
-#        uses: actions/upload-release-asset@v1
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: |
-#            apps/desktop/out/make/deb/x64/*.deb
-#            apps/desktop/out/make/deb/arm64/*.deb
-#            apps/desktop/out/make/squirrel.windows/x64/*Setup.exe
-#          asset_name: |
-#            Web3ExplorerWs-${{ github.ref }}-x64.deb
-#            Web3ExplorerWs-${{ github.ref }}-arm64.deb
-#            Web3ExplorerWs-${{ github.ref }}-Setup.exe
-#          asset_content_type: application/octet-stream
