@@ -36,8 +36,8 @@ jobs:
     needs: release
     env:
       tag: v1.0.6
-      RELEASE_URL: https://github.com/${{github.repository}}/releases/tag/${tag#v}
-    steps:
-      - name: echo release_url
-        run: |
-          echo "Generated Release URL: ${{ RELEASE_URL }}"
+      RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.tag }}
+      steps:
+        - name: Echo release_url
+          run: |
+            echo "Generated Release URL: ${{ env.RELEASE_URL }}"
